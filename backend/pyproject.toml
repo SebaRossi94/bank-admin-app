@@ -1,0 +1,28 @@
+[project]
+name = "bank-app-backend"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "SebaRossi94",email = "seba.rossi.94@gmail.com"}
+]
+readme = "README.md"
+package-mode = false
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard] (>=0.116.2,<0.117.0)",
+    "sqlmodel (>=0.0.25,<0.0.26)",
+    "alembic (>=1.16.5,<2.0.0)",
+    "psycopg2-binary (>=2.9.10,<3.0.0)"
+]
+
+[tool.poetry]
+
+[tool.poetry.group.dev.dependencies]
+black = "^25.9.0"
+flake8 = "^7.3.0"
+isort = "^6.0.1"
+pytest = "^8.4.2"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
