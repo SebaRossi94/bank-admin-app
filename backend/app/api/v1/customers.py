@@ -8,6 +8,7 @@ from sqlmodel import select
 
 from app.db import session_dependency
 from app.models.customer import Customer, CustomerCreate
+from app.models.account import Account
 
 router = APIRouter(prefix="/customers", tags=["customers"])
 
@@ -30,9 +31,6 @@ def create_customer(
     """
     Create Customer
     """
-    """
-    Create a new user.
-    """
     created_customer = Customer(**customer_data.model_dump())
     session.add(created_customer)
     session.commit()
@@ -42,10 +40,20 @@ def create_customer(
 
 @router.get("/{customer_id}")
 def get_customer_by_id(customer_id: int, session: session_dependency) -> Customer:
-    print(id)
+    """
+    Get customer by id
+    """
     customer = session.exec(select(Customer).where(Customer.id == customer_id)).first()
     if not customer:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Customer not found"
         )
     return customer
+
+@router.get("/{customer_id}/accounts")
+def get_customer_accounts(customer_id: int, session: session_dependency) -> Sequence[Account]:
+    """
+    Get customer accounts by customer id
+    """
+    accounts = session.exec(select(Account).where(Account.customer_id == customer_id)).all()
+    return accounts

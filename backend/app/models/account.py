@@ -2,7 +2,7 @@ import uuid
 from sqlmodel import Field, Relationship
 
 from .customer import Customer
-from app.db import SQLBaseModelAudit
+from app.db import SQLBaseModel, SQLBaseModelAudit
 
 
 class Account(SQLBaseModelAudit, table=True):
@@ -11,3 +11,8 @@ class Account(SQLBaseModelAudit, table=True):
     balance: float = Field(default=0.0, ge=0.0, nullable=False)
     customer_id: int = Field(foreign_key="customer.id", nullable=False)
     customer: Customer = Relationship(back_populates="accounts")
+
+
+class AccountCreate(SQLBaseModel):
+    balance: float = Field(default=0.0, ge=0.0, nullable=False)
+    customer_id: int
