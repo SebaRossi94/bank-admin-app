@@ -3,9 +3,11 @@ from fastapi.routing import APIRouter
 from app.db import check_db_health
 from app.models.health import HealthcheckResponse, HealthStatus, DBStatus
 from app.settings import settings
+from .v1 import router as v1_router
 
 router = APIRouter()
 
+router.include_router(v1_router)
 
 @router.get("/health")
 def health_check() -> HealthcheckResponse:

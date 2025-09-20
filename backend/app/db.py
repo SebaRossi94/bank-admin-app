@@ -1,7 +1,8 @@
 import logging
 from datetime import datetime, timezone
-from typing import Generator
-
+from typing import Annotated
+from collections.abc import Generator
+from fastapi import Depends
 from sqlalchemy import QueuePool, create_engine, event, text
 from sqlmodel import Field, Session, SQLModel
 
@@ -57,3 +58,9 @@ def check_db_health() -> bool:
     except Exception as e:
         logger.error(f"Database health check failed: {e}")
         return False
+
+
+session_dependency = Annotated[Session, Depends(get_session)]
+session_no_transaction_dependency = Annotated[
+    Session, Depends(get_session_no_transaction)
+]
