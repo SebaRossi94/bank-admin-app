@@ -7,14 +7,14 @@ from fastapi.routing import APIRouter
 from sqlmodel import select
 
 from app.db import session_dependency
-from app.models.account import Account, AccountCreate
+from app.models.account import Account, AccountCreate, AccountRead
 
 router = APIRouter(prefix="/accounts", tags=["accounts"])
 
 logger = logging.getLogger(__name__)
 
 
-@router.get("/")
+@router.get("/", response_model=Sequence[AccountRead])
 def get_all_accounts(session: session_dependency) -> Sequence[Account]:
     """
     Get all accounts
@@ -37,7 +37,7 @@ def create_account(
     return created_account
 
 
-@router.get("/{account_id}")
+@router.get("/{account_id}", response_model=AccountRead)
 def get_account_by_id(account_id: int, session: session_dependency) -> Account:
     print(id)
     account = session.exec(select(Account).where(Account.id == account_id)).first()
