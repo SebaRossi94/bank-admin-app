@@ -37,6 +37,8 @@ RUN pip install --no-cache-dir -r requirements.txt && \
 
 # Copy only necessary files
 COPY app ./app
+COPY migrations ./migrations
+COPY alembic.ini .
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
