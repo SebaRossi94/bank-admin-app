@@ -1,7 +1,7 @@
 import { backendAxios } from "@/app/utils/axios";
 import useSWR, { mutate } from "swr";
 import { useCallback } from "react";
-import { Account } from "@/app/components/root/hooks";
+import { Account } from "../../accounts/hooks";
 
 export interface Customer {
   created_at: string;
