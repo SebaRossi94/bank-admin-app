@@ -12,6 +12,7 @@ import {
   TextField,
   FormControl,
   DialogActions,
+  Link,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 
@@ -26,14 +27,18 @@ function CustomersPage() {
   } = useForm<Pick<Customer, "name" | "email">>();
   const { mutate: createCustomer } = useCreateCustomer();
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID" },
+    {
+      field: "id",
+      headerName: "ID",
+      renderCell: (params) => (
+        <Link href={`/customers/${params.value}`}>{params.value}</Link>
+      ),
+    },
     { field: "name", headerName: "Name" },
     { field: "email", headerName: "Email", width: 200 },
     { field: "created_at", headerName: "Created At", width: 150 },
     { field: "updated_at", headerName: "Updated At", width: 150 },
-    { field: "actions", headerName: "", width: 150 },
   ];
-
 
   if (error) return <div>Error: {error.message}</div>;
   if (customers && customers.length === 0) return <div>No customers found</div>;

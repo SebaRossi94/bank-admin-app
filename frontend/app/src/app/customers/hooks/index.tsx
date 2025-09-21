@@ -1,6 +1,7 @@
 import { backendAxios } from "@/app/utils/axios";
 import useSWR, { mutate } from "swr";
 import { useCallback } from "react";
+import { Account } from "@/app/components/root/hooks";
 
 export interface Customer {
   created_at: string;
@@ -8,6 +9,7 @@ export interface Customer {
   id: number;
   name: string;
   email: string;
+  accounts?: Account[];
 }
 
 export const useGetCustomers = () => {
@@ -41,4 +43,22 @@ export const useCreateCustomer = () => {
   );
 
   return { mutate: createCustomer };
+};
+
+export const useGetCustomerById = (id: number) => {
+  const getCustomerById: () => Promise<Customer> = useCallback(async () => {
+    const response = await backendAxios.get(`/v1/customers/${id}`);
+    return response.data;
+  }, [id]);
+
+  return useSWR(`/v1/customers/${id}`, getCustomerById);
+};
+
+export const useGetCustomerAccountsByCustomerId = (id: number) => {
+  const getCustomerAccountsByCustomerId: () => Promise<Account[]> = useCallback(async () => {
+    const response = await backendAxios.get(`/v1/customers/${id}/accounts`);
+    return response.data;
+  }, [id]);
+
+  return useSWR(`/v1/customers/${id}/accounts`, getCustomerAccountsByCustomerId);
 };
