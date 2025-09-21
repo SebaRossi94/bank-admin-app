@@ -43,7 +43,7 @@ export default function RootLayout({
             >
               <Header />
               <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-                <Container maxWidth="lg">{children}</Container>
+                {children}
               </Box>
               <Footer />
             </Box>
