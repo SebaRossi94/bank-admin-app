@@ -65,7 +65,7 @@ def get_account_transferences_by_id(
     """
     Get account transferences by account number
     """
-    outgoing_transferences = session.exec(
+    account_transferences = session.exec(
         select(Transference).where(
             or_(
                 Transference.from_account_number == account_id,
@@ -73,4 +73,4 @@ def get_account_transferences_by_id(
             )
         )
     ).all()
-    return list(outgoing_transferences)
+    return account_transferences
