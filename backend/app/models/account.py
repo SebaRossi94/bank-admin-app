@@ -1,3 +1,4 @@
+from decimal import Decimal
 import uuid
 from sqlmodel import Field, Relationship
 
@@ -8,7 +9,7 @@ from app.db import SQLBaseModel, SQLBaseModelAudit
 class Account(SQLBaseModelAudit, table=True):
     id: int = Field(default=None, primary_key=True)
     number: uuid.UUID = Field(default_factory=uuid.uuid4, unique=True, nullable=False)
-    balance: float = Field(default=0.0, ge=0.0, nullable=False)
+    balance: Decimal = Field(default=0.00, ge=0.00, nullable=False, max_digits=15, decimal_places=2)
     customer_id: int = Field(foreign_key="customer.id", nullable=False)
 
     customer: Customer = Relationship(back_populates="accounts")
