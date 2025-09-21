@@ -1,7 +1,8 @@
 import { backendAxios } from "@/app/utils/axios";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
+import { useCallback } from "react";
 
-interface Customer {
+export interface Customer {
   created_at: string;
   updated_at: string;
   id: number;
@@ -21,4 +22,23 @@ export const useGetCustomers = () => {
   };
 
   return useSWR("/v1/customers/", getCustomers);
+};
+
+export const useCreateCustomer = () => {
+  const createCustomer = useCallback(
+    async (customer: Pick<Customer, "name" | "email">) => {
+      try {
+        const response = await backendAxios.post("/v1/customers/", customer);
+        // Revalidate the customers list after creating a new customer
+        mutate("/v1/customers/");
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
+    []
+  );
+
+  return { mutate: createCustomer };
 };
