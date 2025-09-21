@@ -1,5 +1,7 @@
 from decimal import Decimal
+from typing import Self
 import uuid
+from pydantic import model_validator
 from sqlmodel import Field, Relationship
 
 from app.db import SQLBaseModel, SQLBaseModelAudit
@@ -31,6 +33,12 @@ class TransferenceRead(SQLBaseModel):
 
 
 class TransferenceCreate(SQLBaseModel):
-    balance: Decimal = Field(default=0.00, ge=0.00, nullable=False, max_digits=15, decimal_places=2)
+    balance: Decimal = Field(default=0.00, gt=0.00, nullable=False, max_digits=15, decimal_places=2)
     from_account_number: uuid.UUID = Field(foreign_key="account.number", nullable=False)
     to_account_number: uuid.UUID = Field(foreign_key="account.number", nullable=False)
+
+    @model_validator(mode="after")
+    def validate_account_numbers(self) -> Self:
+        if self.from_account_number == self.to_account_number:
+            raise ValueError("From account number and to account number cannot be the same")
+        return self
