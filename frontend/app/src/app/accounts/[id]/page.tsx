@@ -12,7 +12,7 @@ function AccountDetails() {
     data: customer,
     isLoading: customerLoading,
     error: customerError,
-  } = useGetCustomerById(account!.customer_id);
+  } = useGetCustomerById(account?.customer_id);
 
 
   if (isLoading || customerLoading) return <div>Loading...</div>;

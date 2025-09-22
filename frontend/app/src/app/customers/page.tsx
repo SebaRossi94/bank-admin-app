@@ -36,8 +36,8 @@ function CustomersPage() {
     },
     { field: "name", headerName: "Name" },
     { field: "email", headerName: "Email", width: 200 },
-    { field: "created_at", headerName: "Created At", width: 150 },
-    { field: "updated_at", headerName: "Updated At", width: 150 },
+    { field: "created_at", headerName: "Created At", width: 300 },
+    { field: "updated_at", headerName: "Updated At", width: 300 },
   ];
 
   if (error) return <div>Error: {error.message}</div>;

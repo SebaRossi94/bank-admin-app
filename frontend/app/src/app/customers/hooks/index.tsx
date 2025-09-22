@@ -45,13 +45,14 @@ export const useCreateCustomer = () => {
   return { mutate: createCustomer };
 };
 
-export const useGetCustomerById = (id: number) => {
+export const useGetCustomerById = (id: number | undefined) => {
   const getCustomerById: () => Promise<Customer> = useCallback(async () => {
+    if (!id) throw new Error('Customer ID is required');
     const response = await backendAxios.get(`/v1/customers/${id}`);
     return response.data;
   }, [id]);
 
-  return useSWR(`/v1/customers/${id}`, getCustomerById);
+  return useSWR(id ? `/v1/customers/${id}` : null, getCustomerById);
 };
 
 export const useGetCustomerAccountsByCustomerId = (id: number) => {
