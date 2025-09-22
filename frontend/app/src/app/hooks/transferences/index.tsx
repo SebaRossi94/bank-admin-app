@@ -1,14 +1,9 @@
 import { backendAxios } from "@/app/utils/axios";
 import { UUID } from "crypto";
 import useSWR from "swr";
+import { Transference } from "@/app/types/transferences";
 
-export interface Transference {
-  id: number;
-  number: UUID;
-  balance: number;
-  from_account_number: UUID;
-  to_account_number: UUID;
-}
+
 
 export const useGetTransferences = () => {
   const getTransferences: () => Promise<Transference[]> = async () => {

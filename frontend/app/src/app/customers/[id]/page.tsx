@@ -4,7 +4,7 @@ import React from "react";
 import {
   useGetCustomerAccountsByCustomerId,
   useGetCustomerById,
-} from "../hooks";
+} from "@/app/hooks";
 import { Divider, Stack, Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 

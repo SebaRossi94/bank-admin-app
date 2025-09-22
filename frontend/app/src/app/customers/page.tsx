@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
-import { Customer, useCreateCustomer, useGetCustomers } from "./hooks";
+import { useCreateCustomer, useGetCustomers } from "@/app/hooks";
+import { Customer } from "@/app/types";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
   Button,

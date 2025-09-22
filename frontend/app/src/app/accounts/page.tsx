@@ -2,7 +2,7 @@
 import { Stack, Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React from "react";
-import { useGetAccounts } from "./hooks";
+import { useGetAccounts } from "@/app/hooks";
 import Link from "next/link";
 
 function AccountsPage() {

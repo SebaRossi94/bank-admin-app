@@ -1,8 +1,8 @@
 "use client";
 import React from 'react'
-import { Divider, Stack, Typography } from '@mui/material'
+import { Stack, Typography } from '@mui/material'
 import { DataGrid, GridColDef } from '@mui/x-data-grid'
-import { useGetTransferences } from './hooks';
+import { useGetTransferences } from '@/app/hooks';
 
 function TransferencesPage() {
   const { data: transferences, isLoading, error } = useGetTransferences();

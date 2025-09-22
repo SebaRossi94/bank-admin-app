@@ -1,16 +1,7 @@
 import { backendAxios } from "@/app/utils/axios";
 import useSWR, { mutate } from "swr";
 import { useCallback } from "react";
-import { Account } from "../../accounts/hooks";
-
-export interface Customer {
-  created_at: string;
-  updated_at: string;
-  id: number;
-  name: string;
-  email: string;
-  accounts?: Account[];
-}
+import { Account, Customer  } from "@/app/types";
 
 export const useGetCustomers = () => {
   const getCustomers: () => Promise<Customer[]> = async () => {

@@ -1,13 +1,6 @@
 import { backendAxios } from "@/app/utils/axios";
-import { UUID } from "crypto";
 import useSWR from "swr";
-
-export interface Account {
-  id: number;
-  number: UUID;
-  balance: number;
-  customer_id: number;
-}
+import { Account } from "@/app/types/accounts";
 
 export const useGetAccounts = () => {
   const getAccounts: () => Promise<Account[]> = async () => {

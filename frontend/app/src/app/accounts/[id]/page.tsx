@@ -2,10 +2,12 @@
 import React from "react";
 import { Divider, Stack, Typography } from "@mui/material";
 import { useParams } from "next/navigation";
-import { useGetAccountById } from "../hooks";
-import { useGetCustomerById } from "../../customers/hooks";
+import {
+  useGetAccountById,
+  useGetCustomerById,
+  useGetTransferencesByAccountNumber,
+} from "@/app/hooks";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useGetTransferencesByAccountNumber } from "@/app/transferences/hooks";
 
 function AccountDetails() {
   const { id } = useParams();
