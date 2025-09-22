@@ -11,3 +11,5 @@ export type Customer = {
   }
 
 export type CustomerPaginatedAPIResponse = PaginatedAPIResponse<Customer>;
+
+export type CustomerCreateAPIRequest = Pick<Customer, "name" | "email">;

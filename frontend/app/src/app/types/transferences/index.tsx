@@ -10,3 +10,5 @@ export interface Transference {
   }
 
 export type TransferencePaginatedAPIResponse = PaginatedAPIResponse<Transference>;
+
+export type TransferenceCreateAPIRequest = Pick<Transference, "balance" | "from_account_number" | "to_account_number">;

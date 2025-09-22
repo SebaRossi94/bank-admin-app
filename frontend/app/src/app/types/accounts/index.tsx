@@ -9,3 +9,5 @@ export interface Account {
   }
 
 export type AccountPaginatedAPIResponse = PaginatedAPIResponse<Account>;
+
+export type AccountCreateAPIRequest = Pick<Account, "balance" | "customer_id">;
