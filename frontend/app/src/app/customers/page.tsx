@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useCreateCustomer, useGetCustomers } from "@/app/hooks";
 import { Customer } from "@/app/types";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import {
   Button,
   DialogTitle,
@@ -19,7 +19,18 @@ import { useForm } from "react-hook-form";
 
 function CustomersPage() {
   const [createCustomerOpen, setCreateCustomerOpen] = useState<boolean>(false);
-  const { data: customers, error, isLoading } = useGetCustomers();
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: 1,
+  });
+  const {
+    data: customersResponse,
+    error,
+    isLoading,
+  } = useGetCustomers({
+    page: paginationModel.page + 1,
+    size: paginationModel.pageSize,
+  });
   const {
     register,
     handleSubmit,
@@ -37,12 +48,23 @@ function CustomersPage() {
     },
     { field: "name", headerName: "Name" },
     { field: "email", headerName: "Email", width: 200 },
-    { field: "created_at", headerName: "Created At", width: 300 },
-    { field: "updated_at", headerName: "Updated At", width: 300 },
+    {
+      field: "created_at",
+      headerName: "Created At",
+      width: 200,
+      renderCell: (params) => new Date(params.value).toLocaleDateString(),
+    },
+    {
+      field: "updated_at",
+      headerName: "Updated At",
+      width: 200,
+      renderCell: (params) => new Date(params.value).toLocaleDateString(),
+    },
   ];
 
   if (error) return <div>Error: {error.message}</div>;
-  if (customers && customers.length === 0) return <div>No customers found</div>;
+  if (customersResponse && customersResponse.items.length === 0)
+    return <div>No customers found</div>;
   return (
     <Stack direction="column" spacing={2} alignItems="center">
       <Typography variant="h3">Customers</Typography>
@@ -54,10 +76,17 @@ function CustomersPage() {
         Create Customer
       </Button>
       <DataGrid
-        rows={customers}
+        rows={customersResponse?.items}
         columns={columns}
         sx={{ width: "100%", height: "100%" }}
         loading={isLoading}
+        paginationMode={"server"}
+        rowCount={customersResponse?.total}
+        pageSizeOptions={[1, 20, 50, 100]}
+        paginationModel={paginationModel}
+        onPaginationModelChange={(model) => {
+          setPaginationModel(model);
+        }}
       />
       <Dialog
         open={createCustomerOpen}

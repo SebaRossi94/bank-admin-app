@@ -1,9 +1,10 @@
-from collections.abc import Sequence
 import logging
 
 from fastapi import status
 from fastapi.exceptions import HTTPException
 from fastapi.routing import APIRouter
+from fastapi_pagination import Page
+from fastapi_pagination.ext.sqlmodel import paginate
 from sqlmodel import select
 
 from app.db import session_dependency
@@ -16,12 +17,13 @@ logger = logging.getLogger(__name__)
 
 
 @router.get("/")
-def get_all_customers(session: session_dependency) -> Sequence[Customer]:
+def get_all_customers(session: session_dependency) -> Page[Customer]:
     """
     Get all customers
     """
-    all_customers = session.exec(select(Customer)).all()
-    return all_customers
+    all_customers_query = select(Customer)
+    response: Page[Customer] = paginate(session, all_customers_query)
+    return response
 
 
 @router.post("/")
@@ -51,9 +53,10 @@ def get_customer_by_id(customer_id: int, session: session_dependency) -> Custome
     return customer
 
 @router.get("/{customer_id}/accounts")
-def get_customer_accounts(customer_id: int, session: session_dependency) -> Sequence[Account]:
+def get_customer_accounts(customer_id: int, session: session_dependency) -> Page[Account]:
     """
     Get customer accounts by customer id
     """
-    accounts = session.exec(select(Account).where(Account.customer_id == customer_id)).all()
-    return accounts
+    accounts_query = select(Account).where(Account.customer_id == customer_id)
+    response: Page[Account] = paginate(session, accounts_query)
+    return response

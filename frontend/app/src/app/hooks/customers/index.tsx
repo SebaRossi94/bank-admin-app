@@ -1,20 +1,29 @@
 import { backendAxios } from "@/app/utils/axios";
 import useSWR, { mutate } from "swr";
 import { useCallback } from "react";
-import { Account, Customer  } from "@/app/types";
+import { Account, Customer, CustomerPaginatedAPIResponse  } from "@/app/types";
 
-export const useGetCustomers = () => {
-  const getCustomers: () => Promise<Customer[]> = async () => {
+export interface GetCustomersParams {
+  page?: number;
+  size?: number;
+}
+export const useGetCustomers = (params: GetCustomersParams) => {
+  const getCustomers: () => Promise<CustomerPaginatedAPIResponse> = async () => {
     try {
-      const response = await backendAxios.get("/v1/customers/");
+      const response = await backendAxios.get("/v1/customers/", { params });
       return response.data;
     } catch (error) {
       console.error(error);
       throw error;
     }
   };
+  
+  // Create a proper cache key that includes all parameters
+  const cacheKey = ["/v1/customers/", params];
 
-  return useSWR("/v1/customers/", getCustomers);
+  return useSWR(cacheKey, getCustomers, {
+    revalidateIfStale: false,
+  });
 };
 
 export const useCreateCustomer = () => {
@@ -22,8 +31,12 @@ export const useCreateCustomer = () => {
     async (customer: Pick<Customer, "name" | "email">) => {
       try {
         const response = await backendAxios.post("/v1/customers/", customer);
-        // Revalidate the customers list after creating a new customer
-        mutate("/v1/customers/");
+        // Revalidate all customers cache entries after creating a new customer
+        mutate(
+          (key) => Array.isArray(key) && key[0] === "/v1/customers/",
+          undefined,
+          { revalidate: true }
+        );
         return response.data;
       } catch (error) {
         console.error(error);
