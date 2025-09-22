@@ -1,5 +1,6 @@
 "use client";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import React, { useState } from "react";
 import {
   useGetCustomerAccountsByCustomerId,
@@ -27,6 +28,14 @@ function CustomerDetailsPage() {
   if (error) return <div>Error: {error.message}</div>;
   if (!customer) return <div>Customer not found</div>;
   const columns: GridColDef[] = [
+    {
+      field: "id",
+      headerName: "ID",
+      width: 100,
+      renderCell: (params) => (
+        <Link href={`/accounts/${params.value}`}>{params.value}</Link>
+      ),
+    },
     { field: "number", headerName: "Number", width: 300 },
     { field: "balance", headerName: "Balance", width: 150 },
     { field: "created_at", headerName: "Created At", width: 300 },

@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Stack, Typography } from '@mui/material'
 import { DataGrid, GridColDef, GridPaginationModel } from '@mui/x-data-grid'
 import { useGetTransferences } from '@/app/hooks';
+import { CreateTransferenceButton } from '../components/CreateTransferenceButton';
 
 function TransferencesPage() {
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
@@ -30,6 +31,7 @@ function TransferencesPage() {
   return (
     <Stack direction="column" spacing={2} alignItems="center">
       <Typography variant="h3">Transferences</Typography>
+      <CreateTransferenceButton />
       <DataGrid
         rows={transferencesResponse?.items}
         columns={columns}

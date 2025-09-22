@@ -4,6 +4,7 @@ import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import React, { useState } from "react";
 import { useGetAccounts } from "@/app/hooks";
 import Link from "next/link";
+import { CreateAccountButton } from "../components/CreateAccountButton";
 
 function AccountsPage() {
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
@@ -37,6 +38,7 @@ function AccountsPage() {
   return (
     <Stack direction="column" spacing={2} alignItems="center">
       <Typography variant="h3">Accounts</Typography>
+      <CreateAccountButton />
       <DataGrid
         rows={accountsResponse?.items}
         columns={columns}

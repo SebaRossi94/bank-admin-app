@@ -16,6 +16,7 @@ import {
   Link,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
+import { CreateCustomerButton } from "../components/CreateCustomerButton";
 
 function CustomersPage() {
   const [createCustomerOpen, setCreateCustomerOpen] = useState<boolean>(false);
@@ -68,13 +69,7 @@ function CustomersPage() {
   return (
     <Stack direction="column" spacing={2} alignItems="center">
       <Typography variant="h3">Customers</Typography>
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setCreateCustomerOpen(true)}
-      >
-        Create Customer
-      </Button>
+      <CreateCustomerButton />
       <DataGrid
         rows={customersResponse?.items}
         columns={columns}
@@ -88,68 +83,6 @@ function CustomersPage() {
           setPaginationModel(model);
         }}
       />
-      <Dialog
-        open={createCustomerOpen}
-        onClose={() => setCreateCustomerOpen(false)}
-        fullWidth
-      >
-        <DialogTitle>Create Customer</DialogTitle>
-        <br />
-        <DialogContent>
-          <FormControl fullWidth>
-            <Stack direction="column" spacing={3} width="100%">
-              <TextField
-                label="Name"
-                {...register("name", { required: "Name is required" })}
-                error={!!errors.name}
-                helperText={errors.name?.message}
-                fullWidth
-              />
-              <TextField
-                label="Email"
-                type="email"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address",
-                  },
-                })}
-                error={!!errors.email}
-                helperText={errors.email?.message}
-                fullWidth
-              />
-            </Stack>
-          </FormControl>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleSubmit(async (data) => {
-              try {
-                await createCustomer(data);
-                setCreateCustomerOpen(false);
-                reset({});
-              } catch (error) {
-                console.error("Failed to create customer:", error);
-              }
-            })}
-          >
-            Create Customer
-          </Button>
-          <Button
-            variant="outlined"
-            color="secondary"
-            onClick={() => {
-              setCreateCustomerOpen(false);
-              reset({});
-            }}
-          >
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Stack>
   );
 }
