@@ -1,7 +1,7 @@
 import { backendAxios } from "@/app/utils/axios";
 import { UUID } from "crypto";
-import useSWR from "swr";
-import { Transference, TransferencePaginatedAPIResponse } from "@/app/types/transferences";
+import useSWR, { mutate } from "swr";
+import { Transference, TransferenceCreateAPIRequest, TransferencePaginatedAPIResponse } from "@/app/types/transferences";
 
 export interface GetTransferencesParams {
   page?: number;
@@ -59,4 +59,22 @@ export const useGetTransferenceById = (id: number) => {
     return response.data;
   };
   return useSWR(`/v1/transferences/${id}`, getTransferenceById);
+};
+
+export const useCreateTransference = () => {
+  const createTransference: (data: TransferenceCreateAPIRequest) => Promise<Transference> = async (data) => {
+    try {
+      const response = await backendAxios.post("/v1/transferences/", data);
+      mutate(
+        (key) => Array.isArray(key) && key[0] === "/v1/transferences/",
+        undefined,
+        { revalidate: true }
+      );
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+  return { mutate: createTransference };
 };
