@@ -58,9 +58,11 @@ def get_account_by_id(account_id: int, session: session_dependency) -> Account:
     return account
 
 
-@router.get("/{account_number}/transferences", response_model=Sequence[TransferenceRead])
+@router.get(
+    "/{account_number}/transferences", response_model=Sequence[TransferenceRead]
+)
 def get_account_transferences_by_id(
-    account_id: uuid.UUID, session: session_dependency
+    account_number: uuid.UUID, session: session_dependency
 ) -> Sequence[Transference]:
     """
     Get account transferences by account number
@@ -68,8 +70,8 @@ def get_account_transferences_by_id(
     account_transferences = session.exec(
         select(Transference).where(
             or_(
-                Transference.from_account_number == account_id,
-                Transference.to_account_number == account_id,
+                Transference.from_account_number == account_number,
+                Transference.to_account_number == account_number,
             )
         )
     ).all()
