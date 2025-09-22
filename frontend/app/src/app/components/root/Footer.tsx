@@ -10,10 +10,12 @@ function Footer() {
   const icons = [
     {
       icon: GitHubIcon,
+      name: "GitHub",
       onClick: () => window.open("https://github.com/SebaRossi94", "_blank"),
     },
     {
       icon: LinkedInIcon,
+      name: "LinkedIn",
       onClick: () =>
         window.open(
           "https://www.linkedin.com/in/sebastian-rossi-94/",
@@ -22,6 +24,7 @@ function Footer() {
     },
     {
       icon: MailIcon,
+      name: "Email",
       onClick: () => window.open("mailto:seba.rossi.94@gmail.com", "_blank"),
     },
   ];
@@ -37,6 +40,7 @@ function Footer() {
       <Stack direction="row" spacing={2} justifyContent="space-between">
         {icons.map((icon) => (
           <icon.icon
+            key={icon.name}
             color="primary"
             onClick={icon.onClick}
             sx={{ cursor: "pointer", ":hover": { color: "secondary" } }}
