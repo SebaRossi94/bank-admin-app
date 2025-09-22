@@ -8,6 +8,7 @@ import {
 } from "@/app/hooks";
 import { Divider, Stack, Typography } from "@mui/material";
 import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
+import { CreateAccountButton } from "@/app/components/CreateAccountButton";
 
 function CustomerDetailsPage() {
   const { id } = useParams();
@@ -55,6 +56,7 @@ function CustomerDetailsPage() {
       <Divider />
       <Stack direction="column" spacing={2}>
         <Typography variant="h4">Accounts</Typography>
+        <CreateAccountButton customerId={Number(id)} />
         <DataGrid
           rows={customerAccountsResponse?.items}
           columns={columns}

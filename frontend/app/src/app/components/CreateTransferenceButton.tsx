@@ -1,9 +1,10 @@
 import CreateEntityButton, { FormFieldConfig } from "./CreateEntityButton";
 import { useCreateTransference } from "../hooks";
-import { TransferenceCreateAPIRequest } from "../types";
+import { TransferenceCreateAPIRequest } from "../types/transferences";
+import { UUID } from "crypto";
 
-export const CreateTransferenceButton = () => {
-    const { mutate: createTransference } = useCreateTransference();
+export const CreateTransferenceButton = ({ fromAccountNumber, accountId }: { fromAccountNumber?: UUID, accountId?: number }) => {
+    const { mutate: createTransference } = useCreateTransference(accountId);
     const transferFields: FormFieldConfig[] = [
       {
         name: "from_account_number",
@@ -11,8 +12,13 @@ export const CreateTransferenceButton = () => {
         type: "text",
         required: true,
         validation: {
-
-        }
+          pattern: {
+            value: /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/,
+            message: "Invalid account number",
+          },
+        },
+        defaultValue: fromAccountNumber ? fromAccountNumber : '',
+        readOnly: Boolean(fromAccountNumber),
       },
       {
         name: "to_account_number",
@@ -40,8 +46,8 @@ export const CreateTransferenceButton = () => {
   
     return (
       <CreateEntityButton
-        buttonText="New Transfer"
-        dialogTitle="Create Money Transfer"
+        buttonText="Wire Transfer"
+        dialogTitle="Create Wire Transfer"
         fields={transferFields}
         submitButtonText="Execute Transfer"
         onSubmit={handleTransferSubmit}

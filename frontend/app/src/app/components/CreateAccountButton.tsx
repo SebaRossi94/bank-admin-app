@@ -3,7 +3,7 @@ import { useCreateAccount } from "@/app/hooks";
 import CreateEntityButton, { FormFieldConfig } from "./CreateEntityButton";
 import { AccountCreateAPIRequest } from "@/app/types/accounts";
 
-export const CreateAccountButton = () => {
+export const CreateAccountButton = ({ customerId }: { customerId?: number }) => {
     const { mutate: createAccount } = useCreateAccount();
     const accountFields: FormFieldConfig[] = [
       {
@@ -24,7 +24,8 @@ export const CreateAccountButton = () => {
         label: "Customer ID",
         type: "number",
         required: true,
-        defaultValue: '',
+        defaultValue: customerId ? customerId : '',
+        readOnly: Boolean(customerId),
       },
     ];
   

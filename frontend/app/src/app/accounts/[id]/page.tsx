@@ -8,6 +8,7 @@ import {
   useGetTransferencesByAccountNumber,
 } from "@/app/hooks";
 import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
+import { CreateTransferenceButton } from "@/app/components/CreateTransferenceButton";
 
 function AccountDetails() {
   const { id } = useParams();
@@ -67,7 +68,10 @@ function AccountDetails() {
       <Typography variant="body1">Name: {customer?.name}</Typography>
       <Typography variant="body1">Email: {customer?.email}</Typography>
       <Divider />
+      <Stack direction="row" justifyContent={"space-between"}>
       <Typography variant="h4">Transferences</Typography>
+      <CreateTransferenceButton fromAccountNumber={account?.number} accountId={Number(id)}/>
+      </Stack>
       <Typography variant="body1">Outgoing Transferences:</Typography>
       <DataGrid
         rows={outgoingTransferences}

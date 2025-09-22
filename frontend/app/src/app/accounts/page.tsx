@@ -33,8 +33,6 @@ function AccountsPage() {
     { field: "customer_id", headerName: "Customer ID", width: 150 },
   ];
   if (error) return <div>Error: {error.message}</div>;
-  if (accountsResponse && accountsResponse.items.length === 0)
-    return <div>No accounts found</div>;
   return (
     <Stack direction="column" spacing={2} alignItems="center">
       <Typography variant="h3">Accounts</Typography>

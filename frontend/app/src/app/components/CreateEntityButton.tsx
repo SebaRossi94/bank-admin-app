@@ -42,6 +42,7 @@ export interface FormFieldConfig {
   };
   placeholder?: string;
   defaultValue?: any;
+  readOnly?: boolean;
 }
 
 export interface CreateEntityProps {
@@ -95,6 +96,11 @@ function CreateEntityButton({
         error={!!errors[field.name]}
         helperText={errors[field.name]?.message as string}
         fullWidth
+        slotProps={{
+          input: {
+            readOnly: field.readOnly,
+          },
+        }}
       />
     );
   };
@@ -133,7 +139,7 @@ function CreateEntityButton({
                 setOpen(false);
                 reset();
               } catch (error: any) {
-                setError("root.serverError", { message: error.response.data.detail });
+                setError("root.serverError", { message: error?.response?.data?.detail || error.message });
               }
             })}
             disabled={isLoading}

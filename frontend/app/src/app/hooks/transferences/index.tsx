@@ -1,7 +1,11 @@
 import { backendAxios } from "@/app/utils/axios";
 import { UUID } from "crypto";
 import useSWR, { mutate } from "swr";
-import { Transference, TransferenceCreateAPIRequest, TransferencePaginatedAPIResponse } from "@/app/types/transferences";
+import {
+  Transference,
+  TransferenceCreateAPIRequest,
+  TransferencePaginatedAPIResponse,
+} from "@/app/types/transferences";
 
 export interface GetTransferencesParams {
   page?: number;
@@ -9,16 +13,19 @@ export interface GetTransferencesParams {
 }
 
 export const useGetTransferences = (params?: GetTransferencesParams) => {
-  const getTransferences: () => Promise<TransferencePaginatedAPIResponse> = async () => {
-    try {
-      const response = await backendAxios.get("/v1/transferences/", { params });
-      return response.data;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
-  
+  const getTransferences: () => Promise<TransferencePaginatedAPIResponse> =
+    async () => {
+      try {
+        const response = await backendAxios.get("/v1/transferences/", {
+          params,
+        });
+        return response.data;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    };
+
   // Create a proper cache key that includes all parameters
   const cacheKey = ["/v1/transferences/", params];
 
@@ -32,25 +39,27 @@ export interface GetTransferencesByAccountParams {
   size?: number;
 }
 
-export const useGetTransferencesByAccountNumber = (accountNumber?: UUID, params?: GetTransferencesByAccountParams) => {
-  const getTransferencesByAccountNumber: () => Promise<TransferencePaginatedAPIResponse> = async () => {
-    const response = await backendAxios.get(
-      `/v1/accounts/${accountNumber}/transferences`,
-      { params }
-    );
-    return response.data;
-  };
-  
+export const useGetTransferencesByAccountNumber = (
+  accountNumber?: UUID,
+  params?: GetTransferencesByAccountParams
+) => {
+  const getTransferencesByAccountNumber: () => Promise<TransferencePaginatedAPIResponse> =
+    async () => {
+      const response = await backendAxios.get(
+        `/v1/accounts/${accountNumber}/transferences`,
+        { params }
+      );
+      return response.data;
+    };
+
   // Create a proper cache key that includes all parameters
-  const cacheKey = accountNumber ? [`/v1/accounts/${accountNumber}/transferences`, params] : null;
-  
-  return useSWR(
-    cacheKey,
-    getTransferencesByAccountNumber,
-    {
-      revalidateIfStale: false,
-    }
-  );
+  const cacheKey = accountNumber
+    ? [`/v1/accounts/${accountNumber}/transferences`, params]
+    : null;
+
+  return useSWR(cacheKey, getTransferencesByAccountNumber, {
+    revalidateIfStale: false,
+  });
 };
 
 export const useGetTransferenceById = (id: number) => {
@@ -61,15 +70,26 @@ export const useGetTransferenceById = (id: number) => {
   return useSWR(`/v1/transferences/${id}`, getTransferenceById);
 };
 
-export const useCreateTransference = () => {
-  const createTransference: (data: TransferenceCreateAPIRequest) => Promise<Transference> = async (data) => {
+export const useCreateTransference = (accountId?: number) => {
+  const createTransference: (
+    data: TransferenceCreateAPIRequest
+  ) => Promise<Transference> = async (data) => {
     try {
       const response = await backendAxios.post("/v1/transferences/", data);
       mutate(
-        (key) => Array.isArray(key) && key[0] === "/v1/transferences/",
+        (key) =>
+          Array.isArray(key) &&
+          key[0] === `/v1/accounts/${data.from_account_number}/transferences`,
         undefined,
         { revalidate: true }
       );
+      if (accountId) {
+        mutate(
+          (key) => Array.isArray(key) && key[0] === `/v1/accounts/${accountId}`,
+          undefined,
+          { revalidate: true }
+        );
+      }
       return response.data;
     } catch (error) {
       console.error(error);

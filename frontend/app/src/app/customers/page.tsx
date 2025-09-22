@@ -64,8 +64,6 @@ function CustomersPage() {
   ];
 
   if (error) return <div>Error: {error.message}</div>;
-  if (customersResponse && customersResponse.items.length === 0)
-    return <div>No customers found</div>;
   return (
     <Stack direction="column" spacing={2} alignItems="center">
       <Typography variant="h3">Customers</Typography>
