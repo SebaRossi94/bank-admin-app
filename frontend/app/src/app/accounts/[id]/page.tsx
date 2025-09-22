@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Divider, Stack, Typography } from "@mui/material";
 import { useParams } from "next/navigation";
 import {
@@ -7,10 +7,18 @@ import {
   useGetCustomerById,
   useGetTransferencesByAccountNumber,
 } from "@/app/hooks";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 
 function AccountDetails() {
   const { id } = useParams();
+  const [outgoingPaginationModel, setOutgoingPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: 10,
+  });
+  const [incomingPaginationModel, setIncomingPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: 10,
+  });
   const { data: account, isLoading, error } = useGetAccountById(Number(id));
   const {
     data: customer,
@@ -18,16 +26,19 @@ function AccountDetails() {
     error: customerError,
   } = useGetCustomerById(account?.customer_id);
   const {
-    data: transferences,
+    data: transferencesResponse,
     isLoading: transferencesLoading,
     error: transferencesError,
-  } = useGetTransferencesByAccountNumber(account?.number);
-  const outgoingTransferences = transferences?.filter(
+  } = useGetTransferencesByAccountNumber(account?.number, {
+    page: 1,
+    size: 100, // Get more data to filter client-side for now
+  });
+  const outgoingTransferences = transferencesResponse?.items?.filter(
     (transference) => transference.from_account_number === account?.number
-  );
-  const incomingTransferences = transferences?.filter(
+  ) || [];
+  const incomingTransferences = transferencesResponse?.items?.filter(
     (transference) => transference.to_account_number === account?.number
-  );
+  ) || [];
   const columns: GridColDef[] = [
     { field: "number", headerName: "Number", width: 300 },
     { field: "balance", headerName: "Balance", width: 150 },
@@ -62,6 +73,13 @@ function AccountDetails() {
         rows={outgoingTransferences}
         columns={columns}
         loading={transferencesLoading}
+        paginationMode={"client"}
+        pageSizeOptions={[1, 5, 10, 20]}
+        paginationModel={outgoingPaginationModel}
+        onPaginationModelChange={(model) => {
+          setOutgoingPaginationModel(model);
+        }}
+        sx={{ height: 400 }}
       />
       <Divider />
       <Typography variant="body1">Incoming Transferences:</Typography>
@@ -69,6 +87,13 @@ function AccountDetails() {
         rows={incomingTransferences}
         columns={columns}
         loading={transferencesLoading}
+        paginationMode={"client"}
+        pageSizeOptions={[1, 5, 10, 20]}
+        paginationModel={incomingPaginationModel}
+        onPaginationModelChange={(model) => {
+          setIncomingPaginationModel(model);
+        }}
+        sx={{ height: 400 }}
       />
       <Divider />
     </Stack>

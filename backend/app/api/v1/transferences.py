@@ -3,7 +3,8 @@ from fastapi.routing import APIRouter
 from app.db import session_dependency
 from app.models.transference import Transference, TransferenceCreate
 from sqlmodel import select
-from collections.abc import Sequence
+from fastapi_pagination import Page
+from fastapi_pagination.ext.sqlmodel import paginate
 
 from app.models.account import Account
 
@@ -11,12 +12,13 @@ router = APIRouter(prefix="/transferences", tags=["transferences"])
 
 
 @router.get("/")
-def get_all_transferences(session: session_dependency) -> Sequence[Transference]:
+def get_all_transferences(session: session_dependency) -> Page[Transference]:
     """
     Get all transferences
     """
-    all_transferences = session.exec(select(Transference)).all()
-    return all_transferences
+    all_transferences_query = select(Transference)
+    response: Page[Transference] = paginate(session, all_transferences_query)
+    return response
 
 
 @router.post("/")

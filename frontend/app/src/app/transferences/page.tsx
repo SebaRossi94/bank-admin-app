@@ -1,11 +1,22 @@
 "use client";
-import React from 'react'
+import React, { useState } from 'react'
 import { Stack, Typography } from '@mui/material'
-import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import { DataGrid, GridColDef, GridPaginationModel } from '@mui/x-data-grid'
 import { useGetTransferences } from '@/app/hooks';
 
 function TransferencesPage() {
-  const { data: transferences, isLoading, error } = useGetTransferences();
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: 20,
+  });
+  const {
+    data: transferencesResponse,
+    error,
+    isLoading,
+  } = useGetTransferences({
+    page: paginationModel.page + 1,
+    size: paginationModel.pageSize,
+  });
   const columns: GridColDef[] = [
     { field: "id", headerName: "ID", width: 10 },
     { field: "number", headerName: "Number", width: 300 },
@@ -13,16 +24,24 @@ function TransferencesPage() {
     { field: "from_account_number", headerName: "From Account Number", width: 300 },
     { field: "to_account_number", headerName: "To Account Number", width: 300 },
   ];
-  if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
-  if (transferences && transferences.length === 0) return <div>No transferences found</div>;
+  if (transferencesResponse && transferencesResponse.items.length === 0)
+    return <div>No transferences found</div>;
   return (
     <Stack direction="column" spacing={2} alignItems="center">
       <Typography variant="h3">Transferences</Typography>
       <DataGrid
-        rows={transferences}
+        rows={transferencesResponse?.items}
         columns={columns}
+        sx={{ width: "100%", height: "100%" }}
         loading={isLoading}
+        paginationMode={"server"}
+        rowCount={transferencesResponse?.total || 0}
+        pageSizeOptions={[1, 20, 50, 100]}
+        paginationModel={paginationModel}
+        onPaginationModelChange={(model) => {
+          setPaginationModel(model);
+        }}
       />
     </Stack>
   )

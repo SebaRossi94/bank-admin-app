@@ -1,4 +1,5 @@
 import { UUID } from "crypto";
+import { PaginatedAPIResponse } from "../api";
 
 export interface Transference {
     id: number;
@@ -7,3 +8,5 @@ export interface Transference {
     from_account_number: UUID;
     to_account_number: UUID;
   }
+
+export type TransferencePaginatedAPIResponse = PaginatedAPIResponse<Transference>;

@@ -1,12 +1,23 @@
 "use client";
 import { Stack, Typography } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import React from "react";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
+import React, { useState } from "react";
 import { useGetAccounts } from "@/app/hooks";
 import Link from "next/link";
 
 function AccountsPage() {
-  const { data: accounts, isLoading, error } = useGetAccounts();
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: 20,
+  });
+  const {
+    data: accountsResponse,
+    error,
+    isLoading,
+  } = useGetAccounts({
+    page: paginationModel.page + 1,
+    size: paginationModel.pageSize,
+  });
   const columns: GridColDef[] = [
     {
       field: "id",
@@ -20,17 +31,24 @@ function AccountsPage() {
     { field: "balance", headerName: "Balance", width: 150 },
     { field: "customer_id", headerName: "Customer ID", width: 150 },
   ];
-  if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
-  if (accounts && accounts.length === 0) return <div>No accounts found</div>;
+  if (accountsResponse && accountsResponse.items.length === 0)
+    return <div>No accounts found</div>;
   return (
     <Stack direction="column" spacing={2} alignItems="center">
       <Typography variant="h3">Accounts</Typography>
       <DataGrid
-        rows={accounts}
+        rows={accountsResponse?.items}
         columns={columns}
         sx={{ width: "100%", height: "100%" }}
         loading={isLoading}
+        paginationMode={"server"}
+        rowCount={accountsResponse?.total || 0}
+        pageSizeOptions={[1, 20, 50, 100]}
+        paginationModel={paginationModel}
+        onPaginationModelChange={(model) => {
+          setPaginationModel(model);
+        }}
       />
     </Stack>
   );

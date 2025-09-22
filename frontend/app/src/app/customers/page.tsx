@@ -81,7 +81,7 @@ function CustomersPage() {
         sx={{ width: "100%", height: "100%" }}
         loading={isLoading}
         paginationMode={"server"}
-        rowCount={customersResponse?.total}
+        rowCount={customersResponse?.total || 0}
         pageSizeOptions={[1, 20, 50, 100]}
         paginationModel={paginationModel}
         onPaginationModelChange={(model) => {

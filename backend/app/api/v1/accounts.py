@@ -5,6 +5,8 @@ import uuid
 from fastapi import status
 from fastapi.exceptions import HTTPException
 from fastapi.routing import APIRouter
+from fastapi_pagination import Page
+from fastapi_pagination.ext.sqlmodel import paginate
 from sqlmodel import select, or_
 
 from app.db import session_dependency
@@ -17,13 +19,14 @@ router = APIRouter(prefix="/accounts", tags=["accounts"])
 logger = logging.getLogger(__name__)
 
 
-@router.get("/", response_model=Sequence[AccountRead])
-def get_all_accounts(session: session_dependency) -> Sequence[Account]:
+@router.get("/", response_model=Page[AccountRead])
+def get_all_accounts(session: session_dependency) -> Page[Account]:
     """
     Get all accounts
     """
-    all_accounts = session.exec(select(Account)).all()
-    return all_accounts
+    all_accounts_query = select(Account)
+    response: Page[Account] = paginate(session, all_accounts_query)
+    return response
 
 
 @router.post("/")
@@ -58,21 +61,18 @@ def get_account_by_id(account_id: int, session: session_dependency) -> Account:
     return account
 
 
-@router.get(
-    "/{account_number}/transferences", response_model=Sequence[TransferenceRead]
-)
+@router.get("/{account_number}/transferences", response_model=Page[TransferenceRead])
 def get_account_transferences_by_id(
     account_number: uuid.UUID, session: session_dependency
-) -> Sequence[Transference]:
+) -> Page[Transference]:
     """
     Get account transferences by account number
     """
-    account_transferences = session.exec(
-        select(Transference).where(
-            or_(
-                Transference.from_account_number == account_number,
-                Transference.to_account_number == account_number,
-            )
+    account_transferences_query = select(Transference).where(
+        or_(
+            Transference.from_account_number == account_number,
+            Transference.to_account_number == account_number,
         )
-    ).all()
-    return account_transferences
+    )
+    response: Page[Transference] = paginate(session, account_transferences_query)
+    return response

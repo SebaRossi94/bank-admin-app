@@ -1,21 +1,28 @@
 "use client";
 import { useParams } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import {
   useGetCustomerAccountsByCustomerId,
   useGetCustomerById,
 } from "@/app/hooks";
 import { Divider, Stack, Typography } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 
 function CustomerDetailsPage() {
   const { id } = useParams();
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: 20,
+  });
   const { data: customer, isLoading, error } = useGetCustomerById(Number(id));
   const {
-    data: customerAccounts,
+    data: customerAccountsResponse,
     error: customerAccountsError,
     isLoading: customerAccountsLoading,
-  } = useGetCustomerAccountsByCustomerId(Number(id));
+  } = useGetCustomerAccountsByCustomerId(Number(id), {
+    page: paginationModel.page + 1,
+    size: paginationModel.pageSize,
+  });
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
   if (!customer) return <div>Customer not found</div>;
@@ -40,9 +47,16 @@ function CustomerDetailsPage() {
       <Stack direction="column" spacing={2}>
         <Typography variant="h4">Accounts</Typography>
         <DataGrid
-          rows={customerAccounts}
+          rows={customerAccountsResponse?.items}
           columns={columns}
           loading={customerAccountsLoading}
+          paginationMode={"server"}
+          rowCount={customerAccountsResponse?.total || 0}
+          pageSizeOptions={[1, 20, 50, 100]}
+          paginationModel={paginationModel}
+          onPaginationModelChange={(model) => {
+            setPaginationModel(model);
+          }}
         />
       </Stack>
     </Stack>

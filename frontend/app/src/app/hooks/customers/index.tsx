@@ -59,11 +59,21 @@ export const useGetCustomerById = (id: number | undefined) => {
   return useSWR(id ? `/v1/customers/${id}` : null, getCustomerById);
 };
 
-export const useGetCustomerAccountsByCustomerId = (id: number) => {
-  const getCustomerAccountsByCustomerId: () => Promise<Account[]> = useCallback(async () => {
-    const response = await backendAxios.get(`/v1/customers/${id}/accounts`);
-    return response.data;
-  }, [id]);
+export interface GetCustomerAccountsParams {
+  page?: number;
+  size?: number;
+}
 
-  return useSWR(`/v1/customers/${id}/accounts`, getCustomerAccountsByCustomerId);
+export const useGetCustomerAccountsByCustomerId = (id: number, params?: GetCustomerAccountsParams) => {
+  const getCustomerAccountsByCustomerId: () => Promise<{ items: Account[], total: number }> = useCallback(async () => {
+    const response = await backendAxios.get(`/v1/customers/${id}/accounts`, { params });
+    return response.data;
+  }, [id, params]);
+
+  // Create a proper cache key that includes all parameters
+  const cacheKey = [`/v1/customers/${id}/accounts`, params];
+
+  return useSWR(cacheKey, getCustomerAccountsByCustomerId, {
+    revalidateIfStale: false,
+  });
 };

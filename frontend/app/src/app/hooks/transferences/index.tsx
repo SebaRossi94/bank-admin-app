@@ -1,35 +1,55 @@
 import { backendAxios } from "@/app/utils/axios";
 import { UUID } from "crypto";
 import useSWR from "swr";
-import { Transference } from "@/app/types/transferences";
+import { Transference, TransferencePaginatedAPIResponse } from "@/app/types/transferences";
 
+export interface GetTransferencesParams {
+  page?: number;
+  size?: number;
+}
 
-
-export const useGetTransferences = () => {
-  const getTransferences: () => Promise<Transference[]> = async () => {
+export const useGetTransferences = (params?: GetTransferencesParams) => {
+  const getTransferences: () => Promise<TransferencePaginatedAPIResponse> = async () => {
     try {
-      const response = await backendAxios.get("/v1/transferences/");
+      const response = await backendAxios.get("/v1/transferences/", { params });
       return response.data;
     } catch (error) {
       console.error(error);
       throw error;
     }
   };
-  return useSWR("/v1/transferences/", getTransferences);
+  
+  // Create a proper cache key that includes all parameters
+  const cacheKey = ["/v1/transferences/", params];
+
+  return useSWR(cacheKey, getTransferences, {
+    revalidateIfStale: false,
+  });
 };
 
-export const useGetTransferencesByAccountNumber = (accountNumber?: UUID) => {
-  const getTransferencesByAccountNumber: () => Promise<
-    Transference[]
-  > = async () => {
+export interface GetTransferencesByAccountParams {
+  page?: number;
+  size?: number;
+}
+
+export const useGetTransferencesByAccountNumber = (accountNumber?: UUID, params?: GetTransferencesByAccountParams) => {
+  const getTransferencesByAccountNumber: () => Promise<TransferencePaginatedAPIResponse> = async () => {
     const response = await backendAxios.get(
-      `/v1/accounts/${accountNumber}/transferences`
+      `/v1/accounts/${accountNumber}/transferences`,
+      { params }
     );
     return response.data;
   };
+  
+  // Create a proper cache key that includes all parameters
+  const cacheKey = accountNumber ? [`/v1/accounts/${accountNumber}/transferences`, params] : null;
+  
   return useSWR(
-    accountNumber ? `/v1/accounts/${accountNumber}/transferences` : null,
-    getTransferencesByAccountNumber
+    cacheKey,
+    getTransferencesByAccountNumber,
+    {
+      revalidateIfStale: false,
+    }
   );
 };
 
