@@ -49,6 +49,13 @@ export const useCreateAccount = () => {
         undefined,
         { revalidate: true }
       );
+      mutate(
+        (key) =>
+          Array.isArray(key) &&
+          key[0] === `/v1/customers/${data.customer_id}/accounts`,
+        undefined,
+        { revalidate: true }
+      );
       return response.data;
     } catch (error) {
       console.error(error);

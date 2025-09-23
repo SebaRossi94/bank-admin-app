@@ -18,7 +18,7 @@ function Footer() {
       name: "LinkedIn",
       onClick: () =>
         window.open(
-          "https://www.linkedin.com/in/sebastian-rossi-94/",
+          "https://www.linkedin.com/in/sebastian-rossi-grad/",
           "_blank"
         ),
     },

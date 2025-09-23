@@ -124,9 +124,9 @@ function CreateEntityButton({
             </Stack>
           </FormControl>
         </DialogContent>
-        {errors.root?.serverError && (
+        {errors.root?.saveError && (
           <DialogContent>
-            <Typography color="error">{errors.root.serverError.message}</Typography>
+            <Typography color="error">{errors.root.saveError.message}</Typography>
           </DialogContent>
         )}
         <DialogActions>
@@ -139,7 +139,7 @@ function CreateEntityButton({
                 setOpen(false);
                 reset();
               } catch (error: any) {
-                setError("root.serverError", { message: error?.response?.data?.detail || error.message });
+                setError("root.saveError", { message: error.message });
               }
             })}
             disabled={isLoading}

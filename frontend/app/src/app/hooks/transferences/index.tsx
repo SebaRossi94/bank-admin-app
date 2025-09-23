@@ -85,7 +85,7 @@ export const useCreateTransference = (accountId?: number) => {
       );
       if (accountId) {
         mutate(
-          (key) => Array.isArray(key) && key[0] === `/v1/accounts/${accountId}`,
+          `/v1/accounts/${accountId}`,
           undefined,
           { revalidate: true }
         );
