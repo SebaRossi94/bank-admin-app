@@ -1,25 +1,15 @@
 "use client";
 import React, { useState } from "react";
-import { useCreateCustomer, useGetCustomers } from "@/app/hooks";
-import { Customer } from "@/app/types";
+import { useGetCustomers } from "@/app/hooks";
 import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import {
-  Button,
-  DialogTitle,
-  Dialog,
   Stack,
   Typography,
-  DialogContent,
-  TextField,
-  FormControl,
-  DialogActions,
   Link,
 } from "@mui/material";
-import { useForm } from "react-hook-form";
 import { CreateCustomerButton } from "../components/CreateCustomerButton";
 
 function CustomersPage() {
-  const [createCustomerOpen, setCreateCustomerOpen] = useState<boolean>(false);
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
     pageSize: 1,
@@ -32,13 +22,6 @@ function CustomersPage() {
     page: paginationModel.page + 1,
     size: paginationModel.pageSize,
   });
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<Pick<Customer, "name" | "email">>();
-  const { mutate: createCustomer } = useCreateCustomer();
   const columns: GridColDef[] = [
     {
       field: "id",

@@ -9,6 +9,8 @@ import {
 import { Divider, Stack, Typography } from "@mui/material";
 import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import { CreateAccountButton } from "@/app/components/CreateAccountButton";
+import CustomerDetails from "@/app/components/customers/CustomerDetails";
+import CustomerAccountDetails from "@/app/components/customers/CustomerAccountDetails";
 
 function CustomerDetailsPage() {
   const { id } = useParams();
@@ -16,7 +18,11 @@ function CustomerDetailsPage() {
     page: 0,
     pageSize: 20,
   });
-  const { data: customer, isLoading, error } = useGetCustomerById(Number(id));
+  const {
+    data: customer,
+    isLoading: isCustomerLoading,
+    error: customerError,
+  } = useGetCustomerById(Number(id));
   const {
     data: customerAccountsResponse,
     error: customerAccountsError,
@@ -25,9 +31,7 @@ function CustomerDetailsPage() {
     page: paginationModel.page + 1,
     size: paginationModel.pageSize,
   });
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
-  if (!customer) return <div>Customer not found</div>;
+
   const columns: GridColDef[] = [
     {
       field: "id",
@@ -44,15 +48,22 @@ function CustomerDetailsPage() {
   ];
   return (
     <Stack direction="column" spacing={2}>
-      <Typography variant="h3">Customer Details</Typography>
-      <Typography variant="body1">Name: {customer?.name}</Typography>
-      <Typography variant="body1">Email: {customer?.email}</Typography>
-      <Typography variant="body1">
-        Created At: {customer?.created_at}
-      </Typography>
-      <Typography variant="body1">
-        Updated At: {customer?.updated_at}
-      </Typography>
+      <Stack
+        direction={{ xs: "column", md: "row" }}
+        spacing={2}
+        justifyContent={"space-around"}
+      >
+        <CustomerDetails
+          customer={customer}
+          isLoading={isCustomerLoading}
+          error={customerError}
+        />
+        <CustomerAccountDetails
+          accounts={customerAccountsResponse?.items}
+          isLoading={customerAccountsLoading}
+          error={customerAccountsError}
+        />
+      </Stack>
       <Divider />
       <Stack direction="column" spacing={2}>
         <Typography variant="h4">Accounts</Typography>
